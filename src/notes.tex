@@ -1,0 +1,352 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2cm]{geometry}
+\usepackage{siunitx}
+\usepackage{hyperref}
+
+\title{Notes for the FreeRTOS presentation}
+\author{Bed\v{r}ich Said: 409874@mail.muni.cz}
+
+\begin{document}
+	\maketitle
+	\tableofcontents
+
+	\section{Introduction}
+	\subsection{Slide 1 -- 2}
+	\begin{itemize}
+		\item Video time: 0:00 -- 1:41
+		\item The presentation contains these attachments:
+		\begin{itemize}
+			\item These notes
+			\item The LaTeX beamer slides
+			\item Set of examples in C++ language
+			\item Recorded presentstaion as video
+		\end{itemize}
+		\item Recommended reading procedure:
+		\begin{itemize}
+			\item Look at the presentation slides and at these notes.
+			\item If you find something unclear, please see the corresponding slides on the video presentation.
+			\item You can find the video timing in the beginning of every slide in these notes.
+			\item You can check the source code of the corresponding example. There are written the numbers of corresponding slides for every example.
+			\item If you still have some questions or if there is still something unclear, please contact me in the discussion forum inside IS or via e-mail.
+		\end{itemize}
+	\end{itemize}
+
+	\section{FreeRTOS and used hardware}
+	\subsection{Slide 3 -- 5}
+	\begin{itemize}
+		\item Video time: 1:41 -- 2:42
+		\item FreeRTOS can be compiled for several platforms.
+		\item Some manufacturers already included support of FreeRTOS in their chips.
+		\item For other hardware you have to port it and build by yourself.
+		\item Here we selected ESP32 microcontroller.
+		\item ESP32 is all-in-one chip controller with dual core \SI{160}{MHz} \SI{240}{MHz} CPU, \SI{520}{KiB} SRAM, \SI{4}{MB} flash memory, onboard WiFi or Bluetooth, FreeRTOS support and implemented Arduino API.
+	\end{itemize}
+
+	\subsection{Slide 6}
+	\begin{itemize}
+		\item Video time: 2:42 -- 3:02
+		\item Arduino Learning Kit Starter (ALKS) is an electronic board for beginners and contains several basic peripherals (LEDs, buttons, potenciometers, speaker, sensors, connectors).
+		\item We will use the connected LEDs for visualization of the FreeRTOS tasks.
+	\end{itemize}
+
+	\subsection{Slide 7 -- 9}
+	\begin{itemize}
+		\item Video time: 3:02 -- 6:53
+		\item Fast LED blinking cannot be seen by the human eye.
+		\item We used oscilloscope for visualization of the LED behavior on the screen.
+		\item The screen displays a plot, where X axis is time and Y axis is voltage.
+		\item See the traffic lights simulation and its visualization on the oscilloscope (shown in the video).
+	\end{itemize}
+
+	\section{Minimal working example}
+	\subsection{Slide 10 -- 11}
+	\begin{itemize}
+		\item Video time: 6:53 -- 8:47
+		\item The minimal full working program
+		\item The red LED (L\_R) is blinking after uploading the program to the ESP32.
+		\item setup() -- this functions is called once after boot
+		\item loop() -- this function is called periodically in a loop
+		\item pinMode() -- set the processor's pin as input (for buttons) or output (for LEDs)
+		\item digitalWrite() -- set the processor's pin as HIGH (positive voltage) or LOW (zero voltage)
+		\item delay() -- delay the time in milliseconds
+		\item Documentation for all these functions can be found at www.arduino.cc
+		\item vTaskDelay() -- FreeRTOS specific delay function, this functions aloows to run another thread during waiting, documentation for this function can be found at the FreeRTOS webpage
+	\end{itemize}
+
+	\subsection{Slide 12}
+	\begin{itemize}
+		\item Video time: 8:47 -- 9:14
+		\item Print-screen of the Visual Studio Code editor with installed PlatformIO plugin.
+		\item The minimal working example is displayed on the screen.
+	\end{itemize}
+
+	\subsection{Slide 13 -- 14}
+	\begin{itemize}
+		\item Video time: 9:14 -- 10:30
+		\item Differences between different delay functions.
+		\item Remember the difference between the number of RTOS scheduler ticks and the time in milliseconds.
+		\item See the FreeRTOS documentation for details.
+	\end{itemize}
+
+	\subsection{Slide 15}
+	\begin{itemize}
+		\item Video time: 10:30 -- 10:51
+		\item Just a note: See the naming convention of the FreeRTOS functions, the most interesting are prefixes used for determination of the return type.
+	\end{itemize}
+
+	\section{Tasks and jobs (New task creation)}
+	\subsection{Slide 16 -- 17}
+	\begin{itemize}
+		\item Video time: 10:51 -- 11:28
+		\item The tasks and jobs have the same naming convention as in any RTOS.
+		\item Here we use the priority based scheduler.
+		\item The task with the highest priority is executed.
+		\item Remember that we have 2 cores on this CPU.
+	\end{itemize}
+
+	\subsection{Slide 18}
+	\begin{itemize}
+		\item Video time: 11:28 -- 11:46
+		\item When the task is running, it is switching the LED on and off all the time.
+		\item We can see this changes (blinking) on the oscilloscope.
+		\item This blinking reliably indicates that this specific task is running right now.
+	\end{itemize}
+
+	\subsection{Slide 19}
+	\begin{itemize}
+		\item Video time: 11:46 -- 12:09
+		\item Example of the complete program with creation and execution of the yellow task.
+		\item The yellow task is blinking with the yellow LED.
+	\end{itemize}
+
+	\subsection{Slide 20}
+	\begin{itemize}
+		\item Video time: 12:09 -- 12:22
+		\item We can see the result on the oscilloscope.
+		\item The yellow LED is blinking all the time with \SI{220}{ms} long gaps.
+	\end{itemize}
+	
+	\subsection{Slide 21}
+	\begin{itemize}
+		\item Video time: 12:22 -- 12:29
+		\item The screen shows the zoomed area with the gap.
+		\item Inside this time gap the task is not running and the LED is kept on.
+		\item The yellow area on the screen shows that the LED is changing its state very fast.
+	\end{itemize}
+
+	\subsection{Slide 22}
+	\begin{itemize}
+		\item Video time: 12:29 -- 12:36
+		\item The gap is present periodically every \SI{5.24}{s}
+	\end{itemize}
+
+	\subsection{Slide 23}
+	\begin{itemize}
+		\item Video time: 12:36 -- 12:45
+		\item The program is running exactly \SI{5}{s} between these two gaps.
+		\item This is quite suspicious...
+	\end{itemize}
+
+	\subsection{Slide 24 -- 25}
+	\begin{itemize}
+		\item Video time: 12:45 -- 14:15
+		\item In reality, the processor resets itself periodically after this \SI{5}{s}
+		\item The slide shows the boot procedure displayed using the serial terminal connected to the UART peripheral (serial port).
+		\item \textbf{If the task is running for long time without interruption (when the jobs are infinite), the task will not trigger the watch dog timer on time.}
+		\item \textbf{If the watch dog timer is not triggered, it is considered as failure and the processor performs reset.}
+		\item The watch dog timer can be disabled, but I strongly don't recommend it.
+	\end{itemize}
+
+	\subsection{Slide 26}
+	\begin{itemize}
+		\item Video time: 14:15 -- 14:38
+		\item When the job is finished, the task is waiting until the next execution.
+		\item The job is very simple here. The job only toggles the LED state (on/off).
+	\end{itemize}
+
+	\subsection{Slide 27}
+	\begin{itemize}
+		\item Video time: 14:38 -- 14:48
+		\item Imagine the red task with jobs and delays among them.
+		\item Let's see whats happens...
+	\end{itemize}
+
+	\subsection{Slide 28 -- 30}
+	\begin{itemize}
+		\item Video time: 14:48 -- 16:04
+		\item Now, the task is running with no gaps.
+		\item The LED is on for \SI{5}{ms} and off for the next \SI{5}{ms}.
+		\item The context switching and the time when the scheduler is running is hidden in this \SI{5}{ms} delay.
+	\end{itemize}
+
+	\section{Tasks and jobs (Task properties)}
+	\subsection{Slide 31 -- 36}
+	\begin{itemize}
+		\item Video time: 16:04 -- 17:31
+		\item Let's create a new task with no delay which is pinned to one specific CPU core. Let's disable the watch dog timer and let's see what happens.
+		\item The task is running all time time and we can see that the processor is able to switch the LED on and off \SI{226}{ns}. It is about 4425000 blinks during one second (\SI{4.425}{MHz}). The CPU frequency in this example is \SI{160}{MHz}.
+		\item It means, that the for loop and the two digitalWrite() functions need about 36 CPU instructions.
+		\item But ...
+	\end{itemize}
+
+	\subsection{Slide 37 -- 41}
+	\begin{itemize}
+		\item Video time: 17:31 -- 19:01
+		\item We found a gap long \SI{8.6}{\micro \second}.
+		\item There is no CPU reset like in the previous examples, because the CPU reset takes much more than 36 instructions or \SI{8.6}{\micro \second}.
+		\item This gap occurs exactly every \SI{1}{ms}.
+		\item The scheduler tick rate in this example is \SI{1}{kHz}. So, the scheduler is executed every \SI{1}{ms}.
+		\item The gap shows exactly when the task is suspended and when the scheduler is running.
+	\end{itemize}
+
+	\section{Tasks and jobs (Multiple tasks)}
+	\subsection{Slide 42 -- 45}
+	\begin{itemize}
+		\item Video time: 19:01 -- 19:58
+		\item Imagine multiple tasks (more tasks than CPU cores) with no delay. How the RTOS scheduler will handle this situation?
+		\item Here we created red and yellow task, and the green task is running in the main thread.
+		\item All tasks have priority one here.
+		\item The red and green tasks are sharing the same CPU core, but the yellow task occupies the whole second CPU core.
+	\end{itemize}
+
+	\subsection{Slide 46 -- 47}
+	\begin{itemize}
+		\item Video time: 19:58 -- 20:29
+		\item Let's change the priorities of these tasks.
+		\item Now, the red task with priority 2 and the yellow task with priority 3 occupy both CPU cores all the time.
+		\item The green task with priority one has never been executed.
+	\end{itemize}
+
+	\subsection{Slide 48 -- 49}
+	\begin{itemize}
+		\item Video time: 20:29 -- 21:03
+		\item Now let's change the priorities again.
+		\item The main therad (green task) still has default priority one.
+		\item The red and yellow tasks now have priority 0.
+		\item The result: The green task has the highest priority, so it is always executed.
+		\item The second CPU core is occupied by the first executed red task with lower priority zero. So, the yellow task has never been executed by the scheduler.
+	\end{itemize}
+
+	\section{Tasks and jobs (Jobs)}
+	\subsection{Slide 50 -- 53}
+	\begin{itemize}
+		\item Video time: 21:03 -- 22:15
+		\item Imagine a blinkLedForTime() functions, which emulates a periodic task with one repeating job. The job is running for \texttt{run\_us} microseconds and waiting for \texttt{wait\_ms} scheduler ticks (here equeals to milliseconds).
+		\item Let's call this task with \SI{300}{\micro \second} running and \SI{1}{ms} sleeping.
+		\item You can see that the job is executed every millisecond. Why? Because the vTaskDelay() waits for one scheduler tick. In other words, the scheduler waits until the first scheduler tick after the job finished. The first shceduler tick occurs after \SI{600}{\micro \second}.
+		\item This periodic task executes their jobs every \SI{1}{ms}.
+		\item But this is not guaranteed. For example, the situation is quite different immediately after boot as you can see on the oscilloscope.
+	\end{itemize}
+
+	\subsection{Slide 54 -- 55}
+	\begin{itemize}
+		\item Video time: 22:15 -- 22:56
+		\item Let's change the execution time of the job to \SI{900}{\micro \second}.
+		\item Now the first scheduler tick after \SI{100}{\micro \second} is missed.
+		\item The next job is executed with the first unmissed tick after the next \SI{1}{ms}.
+	\end{itemize}
+
+	\subsection{Slide 56}
+	\begin{itemize}
+		\item Video time: 22:56 -- 23:15
+		\item You can see other examples with different settings.
+		\item Here \SI{1500}{\micro \second} execution time and \SI{2}{ms} waiting time.
+	\end{itemize}
+
+	\subsection{Slide 57 -- 60}
+	\begin{itemize}
+		\item Video time: 23:15 -- 24:20
+		\item Let's try to find when the first scheduler tick is still not missed and when the remaining time is too short.
+		\item With \SI{1500}{\micro \second} the first tick is missed.
+		\item With \SI{1488}{\micro \second} the first tick is not missed.
+		\item With \SI{1489}{\micro \second} the first tick is sometimes missed and sometimes not.
+		\item With \SI{1490}{\micro \second} the first tick is always missed.
+		\item The best practice for handling the jobs inside the task is by using timers. See slide 65 for more information.
+	\end{itemize}
+
+	\subsection{Slide 61 -- 62}
+	\begin{itemize}
+		\item Video time: 24:20 -- 25:06
+		\item Imagine 3 periodic tasks running on two CPU cores with different priorities.
+		\item Try to think about what happens here and how the scheduler handles this work. I think that this is a good exercise.
+		\item The best practice for handling the jobs inside the task is by using timers. See slide 65 for more information.
+	\end{itemize}
+
+	\subsection{Slide 63}
+	\begin{itemize}
+		\item Video time: 25:06 -- 25:24
+		\item I can't present all the supported functions and the whole FreeRTOS API.
+		\item If you are interested in other task control related FreeRTOS functions, please refer the documentation of the FreeRTOS API.
+	\end{itemize}
+
+	\section{Tasks and jobs (Timers)}
+	\subsection{Slide 64 -- 67}
+	\begin{itemize}
+		\item Video time: 25:24 -- 26:59
+		\item Timers are the best practice to handle jobs inside a periodic task.
+		\item In most hardware architectures we have a limited number of hardware timers, but more tasks can be dependent on the same timer.
+		\item See the FreeRTOS documentation for more information about supported API.
+		\item The example shows a job running \SI{600}{\micro \second} and called by the timer every \SI{2}{ms}.
+	\end{itemize}
+
+	\section{Sharing data among threads (Critical sections)}
+	\subsection{Slide 68}
+	\begin{itemize}
+		\item Video time: 26:59 -- 27:40
+		\item This chapter about data sharing is more about parallel systems in general. The real time systems mostly work with more CPUs, so thetheory of parallel systems is important here, too.
+		\item I have selected only critical sections and queues, because they are probably the first structures you will need in any of your implementations with FreeRTOS. But remember that there are much more parallel data structures you can learn in other subjects.
+	\end{itemize}
+
+	\subsection{Slide 69 -- 76}
+	\begin{itemize}
+		\item Video time: 27:40 -- 29:54
+		\item Critical section is a set of instructions between entering and leaving commands.
+		\item The code inside the critical section cannot be interrupted and no other task can activate the same critical section handler when the first one is still running.
+		\item You can handle memory writing and other shared resources using this parallel structure.
+		\item Imagine a function with the critical section and the same function without it.
+		\item Then imagine two tasks using the same critical section (red and yellow task).
+		\item What happens after execution?
+		\item Slides 73 and 74 show the situation without critical sections. One slide shows the situation immediately after boot and the second one somewhere later in time.
+		\item Slides 75 and 76 show the same situation with critical sections enabled.
+		\item See the difference: There are more tasks running at the same time in the first example (slides 73 and 74), but only one task is running at the same time in the second example (slides 75 and 76).
+		\item The difference is caused by using of the critical sections.
+		\item Imagine that you need to share a resource (e.g. the memory), then you need the critical sections to prevent writing to the memory by two or more processes at the same time.
+	\end{itemize}
+
+	\section{Sharing data among threads (Queues)}
+	\subsection{Slide 77 -- 78}
+	\begin{itemize}
+		\item Video time: 29:54 -- 31:14
+		\item The parallel queues work in the producer/consumer layout.
+		\item There are tasks that write (push) something to the queue -- producers.
+		\item And there are tasks that read (get) something from the queue -- consumers.
+		\item You can define the maximum number of elements that can be stored in the queue -- the queue size.
+		\item Imagine one thread reading some data from a sensor and another thread processing and writing the measured data to the persistent memory.
+		\item Then the thread which is reading from the sensor is the producer (it writes the captured data to the queue) and the thread which is reading the data from the queue and processes them is the consumer.
+	\end{itemize}
+
+	\subsection{Slide 79 -- 82}
+	\begin{itemize}
+		\item Video time: 31:14 -- 32:22
+		\item The example shows 3 tasks. One produces, the green task and two consumers, red and yellow tasks.
+		\item The image on the oscilloscope shows when the task is writing the data (green task) and when the other two tasks (red and yellow) are reading the stored data from the queue.
+	\end{itemize}
+
+	\subsection{Slide 83}
+	\begin{itemize}
+		\item Video time: 32:22 -- 32:55
+		\item Here you can see the log of all these tasks. The log shows when the green task published the data and when the red and yellow task read the data from the queue.
+		\item You can see very similar examples in exercises dedicated to parallel and distributed systems in general.
+		\item This example is a screen capture of the serial terminal connected to the ALKS with ESP32 processor running this example.
+	\end{itemize}
+
+	\subsection{Slide 84}
+	\begin{itemize}
+		\item Video time: 32:55 -- 33:25
+		\item Thank you for your attention. I hope you enjoyed this presentation.
+		\item In case of any questions please refer to the dedicated forum in IS or write me directly to the e-mail.
+		\item Have a nice day!
+	\end{itemize}
+
+\end{document}
