@@ -13,6 +13,10 @@ Mr. Brázdil asked me to create this presentation about Free RTOS for IA158 subj
 
 - [https://www.jottacloud.com/s/17485119dfe4a6b4facb072e5100d5396c9/thumbs](https://www.jottacloud.com/s/17485119dfe4a6b4facb072e5100d5396c9/thumbs)
 
+## Direct link to this GitHub repository
+
+- [https://github.com/bsaid/FreeRTOS_presentation](https://github.com/bsaid/FreeRTOS_presentation)
+
 ## Contents of this repository
 
 1. [FreeRTOS.pdf](/FreeRTOS.pdf) - The presentation slides
